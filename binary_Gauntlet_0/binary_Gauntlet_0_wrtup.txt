@@ -1,0 +1,64 @@
+yeah so, this one is bit hard for me but i get it how it works
+
+1st we get one challenge file , which is nothing but a executable file which we are interacting with its 'nc'
+
+now, as that was a executable file
+
+i first try to use tool name xxd so i can find flag but nothing i get as they are not using the standard flag system like picoCTF
+
+so, i open that executable file with ghidra
+
+which shows the following c code:
+
+
+undefined8 main(void)
+
+{
+  char local_88 [108];
+  __gid_t local_1c;
+  FILE *local_18;
+  char *local_10;
+  
+  local_10 = malloc(1000);
+  local_18 = fopen("flag.txt","r");
+  if (local_18 == (FILE *)0x0) {
+    puts(
+        "Flag File is Missing. Problem is Misconfigured, please contact an Admin if you are running this on the shell server."
+        );
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+  fgets(flag,0x40,local_18);
+  signal(0xb,sigsegv_handler);
+  local_1c = getegid();
+  setresgid(local_1c,local_1c,local_1c);
+  fgets(local_10,1000,stdin);
+  local_10[999] = '\0';
+  printf(local_10);
+  fflush(stdout);
+  fgets(local_10,1000,stdin);
+  local_10[999] = '\0';
+  strcpy(local_88,local_10);
+  return 0;
+}
+
+now if we read the code properly then you can see that we have 2 variable local_88 and local_10
+
+local_10 is acting as input variable 
+local_88 is working as buffer size which is 108bytes
+
+now at the last second line of code we have: strcpy(local_88,local_10);
+ 
+what is this doing is copying the bytes from local_10 to local_88 and this is the vulnerable part
+
+as strcpy is dumb , if we past the input size more than the 108bytes then it will also copy the bytes beyond the storage which cause the buffer overflow.
+
+SOLUTION:
+now to get the flag we netcat the provided host
+
+after that 1st we add single 'a' to the input and we get to know that it is showing same output (a)
+
+so now to buffer overflow it we add 108+ a's which broken the executable file and gives us following flag:
+71bbdaa44c97043cfcb1cc1bc5032cf6
+
+

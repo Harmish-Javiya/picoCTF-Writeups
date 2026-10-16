@@ -1,0 +1,56 @@
+yeah yeah, thats a good challenge i have seen reltated to Assembly + reverse engineering, so lets start how did i solve it:
+
+first ssh to provided credentials, after login follow following steps
+
+1)So as we have .bin file run it to see its behaviour, like we will see that we are not allowd to enter the special char like !@#$%^&*()
+
+2)so to see the underlying logic we have to use some great tool like.... like... guesss guesss , yeah yeahh you are at that point yeahhh G.. H.. D.. ghidra, no its not that its LLDB because its the only software installed on the machine
+
+3) open the .bin file with this command => lldb filename.bin , you will enter into its console
+
+4) first we disassemble our file and we know that in reverse engineerig the code starts with main (most off) using this command => di -n main, which will provide following output (this is the part of output):
+
+bypassme.bin`main:
+bypassme.bin[0x162e] <+0>:   endbr64 
+bypassme.bin[0x1632] <+4>:   pushq  %rbp
+bypassme.bin[0x1633] <+5>:   movq   %rsp, %rbp
+bypassme.bin[0x1636] <+8>:   subq   $0x220, %rsp              ; imm = 0x220 
+bypassme.bin[0x163d] <+15>:  movq   %fs:0x28, %rax
+bypassme.bin[0x1646] <+24>:  movq   %rax, -0x8(%rbp)
+bypassme.bin[0x164a] <+28>:  xorl   %eax, %eax
+bypassme.bin[0x164c] <+30>:  movl   $0x3, -0x21c(%rbp)
+bypassme.bin[0x1656] <+40>:  leaq   -0x110(%rbp), %rax
+bypassme.bin[0x165d] <+47>:  movq   %rax, %rdi
+bypassme.bin[0x1660] <+50>:  callq  0x1333                    ; decode_password at bypassme.c:16:33
+bypassme.bin[0x1665] <+55>:  callq  0x14c6                    ; intro_sequence at bypassme.c:45:23
+bypassme.bin[0x166a] <+60>:  movl   -0x21c(%rbp), %eax
+bypassme.bin[0x1670] <+66>:  leal   -0x1(%rax), %edx
+bypassme.bin[0x1673] <+69>:  movl   %edx, -0x21c(%rbp)
+bypassme.bin[0x1679] <+75>:  testl  %eax, %eax
+bypassme.bin[0x167b] <+77>:  setne  %al
+bypassme.bin[0x167e] <+80>:  testb  %al, %al
+bypassme.bin[0x1680] <+82>:  je     0x1812                    ; <+484> at bypassme.c:114:11
+bypassme.bin[0x1686] <+88>:  movl   -0x21c(%rbp), %eax
+bypassme.bin[0x168c] <+94>:  addl   $0x1, %eax
+bypassme.bin[0x168f] <+97>:  movl   %eax, %esi
+
+most import part here is function name decode_password, we will come to that later
+
+here above the decpde_password we have "leaq   -0x110(%rbp), %rax" line which shows that whatever decode_password is stored in the buffer which will be at the space (rbp - 0x110)
+and then in its second line we have "movq   %rax, %rdi" where the data stored in the %rax is stored to %rdi and this is happening because it is AT&T Syntax (we can see that with the help of % and $ sign) 
+
+in AT&T syntax always the syntax are like " function source destination " so in leaq function the buffer is stored to rax and then rax to rdi, so we have this functionality now to access that buffer place we have to run decode_password function and we achieve that with following:
+
+5) type command => b decode_password , adding breakpoint to decode_password
+
+6) command => run, to run the function
+
+7) command => finish, to stop the function after compeleting the decode_password function
+
+8) as we ran the decode_function we have to access our most beautiful place which is buffer place by this command => expr (char *)($rbp - 0x110), this will print the password for our .bin file which is, you want? it is => SuperSecure
+
+9) then close the lldb with command => exit
+
+10) run the .bin file and write the password you got
+
+11) tadddaaaaa!!!!! we got our Flag: picoCTF{d3bugg3r_p0w3r_is_4w3s0m3_f4dd81c8} 

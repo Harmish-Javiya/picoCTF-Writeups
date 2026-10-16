@@ -1,0 +1,98 @@
+This was a mid reverse engineering CTF (easy in Challenges)
+
+so first we have give the netcat to access the application and used it for getting the flag and yeah there we need to enter the number which is greater then 999 to get a flag
+
+now any number wont give the flag so i downloaded the executable file of it and put it inside the GHIDRA 
+
+then i read the code and understand that i need to input the number n which is 1000 >= n < 10000
+
+so i again tried and enter the number btwn this values but didnt get any answer
+
+so i recheck the code and come to know that
+
+the appn is taking input as a string then converting its ASCII to integer (as a good student we will always enter the number) so this never works
+
+so i input the string in it but it shows the invalid input
+
+so again recheck and come to know that theres another path too which check the valid hex or not so instead we have to put the hex value in it
+
+now we put HEX value in it but not working why? because it was a valid hex value but (after the validation it converts that hex value to decimal) and then again check the same condition
+but now this time it worked right yes? no i didnt work because if you see in the given code you will see that we have to put the value in the feild whose string length must be 3 but the decimal value also satisfies the 1000 >= n < 10000
+
+so the only value we can think of which satisfies this condtion is THOUSAND
+
+yeah 1000 ==> 3E8
+
+string size == 3
+and decimal value satisfies the conditon and you get following string:
+}4cdftc_oc_ip6f47ftc_oc_ipa_99ftc_oc_ip9_TGftc_oc_ip_xehftc_oc_ip_tigftc_oc_ipid_3ftc_oc_ip{FTCftc_oc_ipocipftc_oc_ip
+
+so yeah this is the flag and we will input it becaues this is the flag we got!
+nope we need to reverse it 
+
+and we got following:
+pi_co_ctfpicopi_co_ctfCTF{pi_co_ctf3_dipi_co_ctfgit_pi_co_ctfhex_pi_co_ctfGT_9pi_co_ctf99_api_co_ctf74f6pi_co_ctfdc4}
+
+now its look good go and paste it because it has 2-3 format which are accepted by the picoCTF NO?
+
+so remove the pi_co_ctf from the string and will get following flag:
+picoCTF{3_digit_hex_GT_999_a74f6dc4}
+
+so yeah Enjoyed just need to learn C more deeply so i can understand the logic more properly instead of wasting 30min and using AI for it.
+
+==============CODE:=====================================
+
+undefined8 main(void)
+
+{
+  int iVar1;
+  size_t sVar2;
+  long lVar3;
+  undefined8 uVar4;
+  long in_FS_OFFSET;
+  int local_40;
+  char local_38 [40];
+  long local_10;
+  
+  local_10 = *(long *)(in_FS_OFFSET + 0x28);
+  printf("Enter a numeric code (must be > 999 ): ");
+  fflush(stdout);
+  __isoc99_scanf(&DAT_00102070,local_38);
+  sVar2 = strlen(local_38);
+  iVar1 = is_valid_decimal(local_38);
+  if (iVar1 == 0) {
+    iVar1 = is_valid_hex(local_38);
+    if (iVar1 == 0) {
+      puts("Invalid input.");
+      uVar4 = 1;
+      goto LAB_00101698;
+    }
+    lVar3 = strtol(local_38,(char **)0x0,0x10);
+    local_40 = (int)lVar3;
+  }
+  else {
+    local_40 = atoi(local_38);
+  }
+  if (local_40 < 1000) {
+    puts("Too small.");
+  }
+  else if (local_40 < 10000) {
+    if ((int)sVar2 == 3) {
+      reveal_flag();
+    }
+    else {
+      puts("Access Denied.");
+    }
+  }
+  else {
+    puts("Too high.");
+  }
+  uVar4 = 0;
+LAB_00101698:
+  if (local_10 != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return uVar4;
+}
+

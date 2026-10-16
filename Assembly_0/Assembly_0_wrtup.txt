@@ -1,0 +1,23 @@
+as, the given file is a chall.S we have to compile it useing follwoing command
+
+gcc chall.S -o program  (if the chall.S is made on x86 architecture)
+
+after running it we get a particulaar program file which we have to run it,
+but mine chall.S was ARM base so i install following tool
+
+sudo apt install qemu-user gcc-aarch64-linux-gnu
+
+then, i used that to compile my chall.S with following command
+aarch64-linux-gnu-gcc -static chall.S -o program
+
+then run the program with the 2 value provided:
+qemu-aarch64 ./program 2593949075 2233560849
+
+then we get a number: 2593949075 
+
+and by converting that number to hex we get a flag:
+
+hex conversion command: printf "%08x\n" [your number]
+9a9c8593
+
+flag = picoCTF{9a9c8593}

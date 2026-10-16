@@ -1,0 +1,65 @@
+tools used:
+ghidra, python, brain
+
+lets begin,
+so first we downloaded the zip file from the given link, extract it we get 2 files flag.txt and one executable file running executable file and providing right answer of the mats problem we get a encoded version of the flag, now this is the encoded version of the flag.txt we have to understand how it was encoded we use our precious tools brain,ghidra
+
+open the executable file in ghidra, we get a code from which important code is
+
+  local_1c = generate_math_question(&local_29,&local_28,&local_24);
+  printf("What is %d %c %d? ",(ulong)local_28,(ulong)(uint)(int)local_29,(ulong)local_24);
+  fflush(stdout);
+  iVar1 = __isoc23_scanf(&DAT_0010201d,&local_20);
+  if (iVar1 == 1) {
+    if (local_1c == local_20) {
+      local_18 = (void *)read_flag_file("flag.txt");
+      if (local_18 == (void *)0x0) {
+        uVar3 = 1;
+      }
+      else {
+        encode_flag(local_18,local_1c);
+        free(local_18);
+        uVar3 = 0;
+      }
+    }
+    else {
+      puts("Wrong answer! No flag for you.");
+      uVar3 = 1;
+    }
+
+Code explanation:
+
+1) in variable local_1c we stored the answers from the generate_math_question() function
+2) " ivar1 = " <- this line takes the input from the user and store in local_20
+3) this local_20 is pass in encode_flag() function and we get a encoded version of the flag. along with local_20 we also send the original flag (local_18)
+4) following is encode_flag function:
+
+  local_1c = generate_math_question(&local_29,&local_28,&local_24);
+  printf("What is %d %c %d? ",(ulong)local_28,(ulong)(uint)(int)local_29,(ulong)local_24);
+  fflush(stdout);
+  iVar1 = __isoc23_scanf(&DAT_0010201d,&local_20);
+  if (iVar1 == 1) {
+    if (local_1c == local_20) {
+      local_18 = (void *)read_flag_file("flag.txt");
+      if (local_18 == (void *)0x0) {
+        uVar3 = 1;
+      }
+      else {
+        encode_flag(local_18,local_1c);
+        free(local_18);
+        uVar3 = 0;
+      }
+    }
+    else {
+      puts("Wrong answer! No flag for you.");
+      uVar3 = 1;
+    }
+
+=>this is the encode_flag function:
+->this take each character from the flag (local_18) and then multiply it by given answer in terminal (local_20) 
+->after all characters are encoded it print that.
+
+5) so to decode it, we have to just divide the encoded flag with givin answer and the script for that is in this folder. and the flag we get is
+
+flag:
+picoCTF{m4th_b3h1nd_c1ph3r_4a3b2ccf}  

@@ -1,0 +1,136 @@
+so, first we had a system.out file and we have to find the the flag so,
+
+1) by using exiftools we come to know that this file is executable file.
+2) so, we open that file in ghidra and in the decompile code window we get following code
+
+undefined8 main(void)
+{
+  int param1;
+  char *pcVar1;
+  undefined8 uVar2;
+  long in_FS_OFFSET;
+  int local_128;
+  char *local_120;
+  ulong local_118;
+  char *local_110;
+  size_t local_108;
+  ulong local_100;
+  ulong local_f8;
+  FILE *local_f0;
+  byte local_e5 [13];
+  char local_d8 [31];
+  char acStack_b9 [65];
+  char local_78 [104];
+  long local_10;
+  
+  local_10 = *(long *)(in_FS_OFFSET + 0x28);
+  local_110 = calloc(0x5a,1);
+  for (local_118 = 0; local_118 < 0xd; local_118 = local_118 + 1) {
+    local_110[local_118 + 0x3c] = obf_bytes[local_118] ^ 0xaa;
+  }
+  puts("Please set a password for your account:");
+  pcVar1 = fgets(acStack_b9 + 1,0x32,stdin);
+  if (pcVar1 != (char *)0x0) {
+    strcpy(local_110,acStack_b9 + 1);
+    puts("How many bytes in length is your password?");
+    pcVar1 = fgets(local_d8,0x14,stdin);
+    if (pcVar1 != (char *)0x0) {
+      param1 = atoi(local_d8);
+      printf("You entered: %d\n",param1);
+      puts("Your successfully stored password:");
+      for (local_128 = 0; (local_128 <= param1 && (local_128 < 0x5a)); local_128 = local_128 + 1) {
+        printf("%d ",(int)local_110[local_128]);
+      }
+      putchar(10);
+    }
+  }
+  puts("Enter your hash to access your account!");
+  pcVar1 = fgets(acStack_b9 + 1,0x32,stdin);
+  if (pcVar1 != (char *)0x0) {
+    local_108 = strlen(acStack_b9 + 1);
+    if ((local_108 != 0) && (acStack_b9[local_108] == '\n')) {
+      acStack_b9[local_108] = '\0';
+    }
+    local_100 = strtoul(acStack_b9 + 1,&local_120,10);
+    if (local_120 == acStack_b9 + 1) {
+      printf("No digits were found");
+                    /* WARNING: Subroutine does not return */
+      __assert_fail("1 == 0","heartbleed.c",0x45,"main");
+    }
+    local_f8 = make_secret(local_e5);
+    if (local_f8 == local_100) {
+      local_f0 = fopen("flag.txt","r");
+      if (local_f0 == (FILE *)0x0) {
+        perror("Could not open flag.txt");
+        uVar2 = 1;
+        goto LAB_0010173e;
+      }
+      pcVar1 = fgets(local_78,100,local_f0);
+      if (pcVar1 == (char *)0x0) {
+        puts("Failed to read the flag");
+      }
+      else {
+        printf("%s",local_78);
+      }
+      fclose(local_f0);
+    }
+  }
+  free(local_110);
+  uVar2 = 0;
+LAB_0010173e:
+  if (local_10 != *(long *)(in_FS_OFFSET + 0x28)) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return uVar2;
+}
+
+now here, by reading this code we come to now following things
+	=> it has a heartbeat bug, which means the password field is printing the bytes same as the length given (without any check) so we can exploit is by sending max lenght is 90 by this -> local_110 = calloc(0x5a, 1);
+	=> it also has a make_secret function which is responsible for us to use which helps to get the flag or generate the hash we required, and following is the make_secret(); function.
+		void make_secret(byte *param_1)
+
+		{
+ 			long local_10;
+  
+  			for (local_10 = 0; obf_bytes[local_10] != '\0'; local_10 = local_10 + 1) {
+    				param_1[local_10] = obf_bytes[local_10] ^ 0xaa;
+  			}
+  			param_1[0xc] = 0;
+  			hash(param_1);
+  			return;
+		}
+	=> and from this we come to know that theres one more function responsible for the hash we want, hash(param_1); 
+		long hash(byte *param_1)
+
+		{
+  			byte *local_20;
+  			long local_10;
+  
+			local_10 = 0x1505;
+  			local_20 = param_1;
+  			while( true ) {
+    				if (*local_20 == 0) break;
+    				local_10 = (long)(int)(uint)*local_20 + local_10 * 0x21;
+    				local_20 = local_20 + 1;
+  			}
+  			return local_10;
+		}
+	=> and from this function we come to know that it is djb2 hash algo
+	=>so using following python code we get a hash of the string, we get by seeing the leak bytes (90bytes)
+
+		def djb2(s):
+    			h = 0x1505  # 5381
+    			for c in s:
+        			h = ((h * 0x21) + c) & 0xFFFFFFFFFFFFFFFF  # 64-bit overflow
+    			return h
+
+		secret = bytes([105, 85, 98, 104, 56, 49, 33, 106, 42, 104, 110, 33])
+		print(djb2(secret))
+
+	=> and we get following code:7598026985497493354
+	=> and by adding this code to hash required we get our sweet flag
+
+
+flag:picoCTF{d0nt_trust_us3rs}
+ 

@@ -1,0 +1,58 @@
+Its and easy if you are intermediater in the python language
+
+first create the python script to to connect to the provided host and port
+
+and then see the behaviour of the program and we noticed that:
+1) the program is giving the string of number which is the secret we want
+2) we have to paste that secret code to input feild within 1 second so as powerfull human we cant be able to achive that. so, we have to automate it using python script. there are 2 ways using pwn tools or socket in python
+
+so i used the most popular tool or we can say library which is socket in python:
+
+import socket
+import re
+
+#creating socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(("mysterious-sea.picoctf.net", 58773))
+
+buffer = b""
+rounds = 0
+
+while rounds < 20:
+        chunk = s.recv(4096)
+
+        if not chunk:
+                break
+
+        buffer += chunk
+
+        text = buffer.decode(errors = "ignore")
+
+        lines = text.split("\n")
+
+        for line in lines:
+                if re.fullmatch(r"\d+",line) and len(line) < 11:
+                        print(f"[Round {rounds + 1}] Number:",line)
+
+                        s.send((line + "\n").encode())
+
+                        rounds += 1
+                        buffer = b""
+                        break
+
+
+while True:
+        data = s.recv(4096)
+
+        if not data:
+                break
+
+        print(data.decode(errors="ignore"),end = "")
+
+s.close()
+
+as you are the intermediator you can read and understand the code yourself or use AI
+
+and the flag is
+picoCTF{4u7o_r3v_g0_brrr_78c345aa}
+

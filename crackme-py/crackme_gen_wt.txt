@@ -1,0 +1,12 @@
+first we download the file from the picoctf
+
+read the python code
+
+then we see that decode function is neverd call
+so we modifed the python code to call the decode function at the last with the parameters as secert (provided, in my case it was: bezos_cc_secret)
+
+then we run the file with python and we get the flag
+
+flag:
+picoCTF{1m_4_p34nut_810cf782288e77}
+

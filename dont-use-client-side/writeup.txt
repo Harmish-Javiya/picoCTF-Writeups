@@ -1,0 +1,9 @@
+this the most easy picoCTF if you cant do it , leave hacking broo
+
+the flag was in the inspect panel where the javascript was write and the password/flag was in there only
+
+as it was jumble you need to make it proper as per the split x number and we get following
+
+picoCTF{no_clients_plz_2eb02b45}
+
+

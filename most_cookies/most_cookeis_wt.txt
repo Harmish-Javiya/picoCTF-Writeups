@@ -1,0 +1,24 @@
+TITLE: MOST COOKIES
+
+first we can see that theres a placeholder having name SNIKERDOODLE 
+
+so first i tried to input that , and i get the JWT token from the inspect(F12) -> Application -> cookies -> session cookies
+
+copied it and then past it to the JWT decoder:
+
+JWT TOKEN: eyJ2ZXJ5X2F1dGgiOiJzbmlja2VyZG9vZGxlIn0.acp2BA.-hkGbFgd1C0uNNHvO1FNavS0hI4
+DECODE: {
+  "very_auth": "snickerdoodle"
+}
+
+so basically these cookies name are the identiy and we have to find out which cookie name is for admin 
+
+we have got the  script file which include numbers of cookie name:
+secrets= ["snickerdoodle", "chocolate chip", "oatmeal raisin", "gingersnap", "shortbread", "peanut butter", "whoopie pie", "sugar", "molasses", "kiss", "biscotti", "butter", "spritz", "snowball", "drop", "thumbprint", "pinwheel", "wafer", "macaroon", "fortune", "crinkle", "icebox", "gingerbread", "tassie", "lebkuchen", "macaron", "black and white", "white chocolate macadamia"]
+
+Now I applied the python code , saved in this direcotry.
+
+where it generate the JWT token with the this name and, using those JWT token it is sent to the "http://wily-courier.picoctf.net:50928/display" (this link doesnt exist) and if we successfully pass it it curls the website and we find the flag:
+
+following is the flag:
+picoCTF{cO0ki3s_yum_98b76c03}

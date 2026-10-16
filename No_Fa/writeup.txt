@@ -1,0 +1,22 @@
+its just to easy solve this 
+
+we got 3 things which was website, leaked db, and backend python file
+
+so what we are we are the hackers we directly jump to website and it was a login page and now what hacker will do SQL attack to acces the db and then password login and find the flag
+yes ofcourse you can do but..
+
+we had a leakeddb so when you open it you can find the username password email
+
+and yeah you can have password we put it in the password feild and then we get login but it has 2mfa on so what is the OTP?? we dont know
+
+BTW when you put the password make sure to dehash the password with the help of crackstation which will be mosty the SHA-256 without salt so you got the password
+
+now back to the OTP part how do we know the OTP so here there are 2 ways 1) using burpsuite (time comsuming) 2) network panel in inspect 
+
+so after login and on the page of the OTP you inspect the network tab and you see the file called two_fa and so what you do here is you can see the session key
+in most of the CTF challange we have some data in session key (clue) so we must decode it and we found out that that was the flask_session_cookie and how did i know that it is the flask_session_cookie, because mostly people use JWT token so first i decode it as a jwt token but didnt get anything so 2nd option flask
+so decode it using any online decryption tool and you can find it easily online
+
+and from there we got our OTP and put it inside the OTP feild of website and we got our following flag:
+
+flag: picoCTF{n0_r4t3_n0_4uth_d4a8be75}

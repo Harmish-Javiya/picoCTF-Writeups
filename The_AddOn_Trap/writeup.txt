@@ -1,0 +1,22 @@
+when you got any files we have to check for main files like main.js scripts.js or css anything
+
+and so here after the extraction of the xpi file we got some files and by exploring those file
+
+we got following files
+script.js
+styles.css
+main.js
+
+so we check the main.js and find out the KEY AND ENCRYPTED WEBHOOKURL 
+
+so the encryption was looking like the fernet so i decode it online and got the flag 
+
+i decrypted WEBHOOKURL  by using the key i got and we got a flag
+
+key="cGljb0NURnt5b3UncmUgb24gdGhlIHJpZ2h0IHRyYX0=" <== base64
+webhookUrl='gAAAAABmfRjwFKUB-X3GBBqaN1tZYcPg5oLJVJ5XQHFogEgcRSxSis1e4qwicAKohmjqaD-QG8DIN5ie3uijCVAe3xiYmoEHlxATWUP3DC97R00Cgkw4f3HZKsP5xHewOqVPH8ap9FbE' <== Fernet encrypted using above key
+
+flag:
+picoCTF{Us3_4dd/0ns_v3ry_c4r3fully1}
+
+

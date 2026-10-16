@@ -1,0 +1,13 @@
+nothing to do
+
+cat the password.txt 
+
+then run the ende.py with following setting
+
+python3 ende.py -d flag.txt.en
+
+it will ask for password , paste the password which was present in the password.txt
+
+and yeah you got a flag
+
+picoCTF{4p0110_1n_7h3_h0us3_9c5f9bcf}

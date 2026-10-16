@@ -1,0 +1,24 @@
+LOGON
+
+this a good easy level where you got a form of username and password 
+
+and this time too it was broken like you can login with any credentials 
+but the ID was given in the question only but not the password, now the crazy thing is that they didnt put any password and you think that this will be related to password finding, like you have to find it. so you open inspect panel , see networks tabs, application storage, element tab and as I also did thing i didnt find anything (but if you see clearly then in the network tab while login the flag doc appear and you can see in the cookies header or something where you are able to see the username, password, and one more feild admin ,i which was not able to see)
+
+so i think that, I can intercept the request using Burpsuite
+
+so yeah intercepted the request seen that " admin=False "
+
+and i Change it to "admin=true" and forward it,
+
+so this how you fail to get flag because i also didnt get it.
+
+soooooo exactly i spend 30min to see where i am failing and read the writeups and the crazy things happens here
+
+true -> True
+
+and you get following:
+picoCTF{th3_c0nsp1r4cy_l1v3s_4d184b0d}
+
+solved!!!
+
